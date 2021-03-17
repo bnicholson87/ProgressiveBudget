@@ -48,7 +48,7 @@ function checkDatabase() {
             "Content-Type": "application/json"
           }
         })
-        .then(response => response.json())
+        .then(response =>{return response.json()})
         .then(() => {
           // if successful, open a transaction on your pending db
           const transaction = db.transaction(["pending"], "readwrite");
