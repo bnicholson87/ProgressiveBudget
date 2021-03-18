@@ -1,16 +1,16 @@
 var CACHE_NAME = "my-site-cache-v1";
 const DATA_CACHE_NAME = "data-cache-v1";
-​
+
 var urlsToCache = [
   "/",
-  "/db.js",
+  "/indexDB.js",
   "/index.js",
   "/manifest.json",
   "/styles.css",
   "/icons/icon-192x192.png",
   "/icons/icon-512x512.png"
 ];
-​
+
 self.addEventListener("install", function(event) {
   // Perform install steps
   event.waitUntil(
@@ -21,24 +21,22 @@ self.addEventListener("install", function(event) {
   );
 });
 
-self.addEventListener("activate", function(event) {
-  event.waitUntil(
-    caches.keys().then(keyList => {
-      return Promise.all(
-        keyList.map(key => {
-          if (key !== CACHE_NAME && key !== DATA_CACHE_NAME) {
-            console.log("Removing old cache data", key);
-            return caches.delete(key);
-          }
-        })
-      );
-    })
-  );
+// self.addEventListener("activate", function(event) {
+//   event.waitUntil(
+//     caches.keys().then(keyList => {
+//       return Promise.all(
+//         keyList.map(key => {
+//           if (key !== CACHE_NAME && key !== DATA_CACHE_NAME) {
+//             console.log("Removing old cache data", key);
+//             return caches.delete(key);
+//           }
+//         })
+//       );
+//     })
+//   );
 
-  self.clients.claim();
-});
-
-​
+//   self.clients.claim();
+// });
 self.addEventListener("fetch", function(event) {
   // cache all get requests to /api routes
   if (event.request.url.includes("/api")) {
@@ -50,7 +48,7 @@ self.addEventListener("fetch", function(event) {
             if (response.status === 200) {
               cache.put(event.request.url, response.clone());
             }
-​
+
             return response;
           })
           .catch(err => {
@@ -59,10 +57,10 @@ self.addEventListener("fetch", function(event) {
           });
       }).catch(err => console.log(err))
     );
-​
+
     return;
   }
-​
+
   event.respondWith(
     fetch(event.request).catch(function() {
       return caches.match(event.request).then(function(response) {
